@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Practica 1</title>
+	<title>Practica 1.0</title>
 </head>
 <body>
 
