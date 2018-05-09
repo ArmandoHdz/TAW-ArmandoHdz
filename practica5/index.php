@@ -1,7 +1,8 @@
 <?php
-include_once('datos.php');
-$user_access = getAlumno();
-$total_users = count($user_access);
+include_once('database_details.php');
+//$user_access = [];
+$user_access = getDatos();
+$total_users = getCantidad();
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -20,13 +21,8 @@ $total_users = count($user_access);
     <div class="row">
  
       <div class="large-9 columns">
-        <h3>Alumnos</h3>
-        <p>Listado</p>
-        <div class="large-9 columns">
-          <ul class="right button-group">
-            <li><a href="./agregar_alumno.php" class="button">Agregar</a></li>
-          </ul>
-        </div>
+        <h3>Ejemplos de listado en array</h3>
+          <p>Listado</p>
         <div class="section-container tabs" data-section>
           <section class="section">
             <div class="content" data-slug="panel1">
@@ -37,24 +33,22 @@ $total_users = count($user_access);
                 <thead>
                   <tr>
                     <th width="200">ID</th>
-                    <th width="250">Matricula</th>
                     <th width="250">Nombre</th>
-                    <th width="250">Carrera</th>
-                    <th width="250">Email</th>
-                    <th width="250">Telefono</th>
+                    <th width="250">Correo</th>
+                    <th width="250">Acción</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php foreach( $user_access as $id => $user ){ ?>
                   <tr>
-                    <td><?php echo $id ?></td>
-                    <td><?php echo $user['matricula'] ?></td>
+                    <td><?php echo $user['Id'] ?></td>
                     <td><?php echo $user['nombre'] ?></td>
-                    <td><?php echo $user['carrera'] ?></td>
-                    <td><?php echo $user['email'] ?></td>
-                    <td><?php echo $user['telefono'] ?></td>
-                    <td><a href="./key_alumnos.php?id=<?php echo $id; ?>" class="button radius tiny secondary">Ver detalles</a></td>
+                    <td><?php echo $user['correo'] ?></td>
+                    <td><a href="./detalles_usuario.php?Id=<?php echo $id; ?>" class="button radius tiny secondary">Ver detalles</a></td>
+                    <td><a href="./delete.php?Id=<?php echo $user['Id']; ?>" class="button radius tiny secondary">Eliminar</a></td>
                   </tr>
+
                   <?php } ?>
                   <tr>
                     <td colspan="4"><b>Total de registros: </b> <?php echo $total_users; ?></td>

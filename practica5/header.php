@@ -14,8 +14,8 @@
       </div>
       <div class="large-9 columns">
         <ul class="right button-group">
-          <li><a href="./index.php" class="button">Alumnos</a></li>
-          <li><a href="./maestros.php" class="button">Maestros</a></li>
+          <li><a href="./index.php" class="button">Inicio</a></li>
+          <li><a href="./random.php" class="button">Color</a></li>
         </ul>
       </div>
     </div>
