@@ -5,55 +5,33 @@
 	<meta charset="UTF-8">
 	<title>Practica 12</title>
 
-	<style>
-
+	<?php include_once('links/link1.php'); ?>
+	<style type="text/css">
+		.login{
+			padding: 50px;max-width: 450px; width: 50%; position: relative;margin: 0 auto;
+		}
 	</style>
-	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-	  <!-- Ionicons -->
-	<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-	  <!-- Theme style -->
-	<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
-	  <!-- Google Font: Source Sans Pro -->
-	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+	
 
 </head>
 
-<body>
+<!--body class="hold-transition sidebar-mini"-->
+<body class="hold-transition login-page">
+	<div class="wrapper">
 
+	<?php
+		if(isset($_GET['action'])){
+			if($_GET['action'] != 'fallo'){
+				include "modules/navegacion.php";	
+			}	
+		}	
 
-<?php 
-if(isset($_GET['action'])){
-	if($_GET['action']=='ingresar'){
-		include "modules/navegacion.php";
-	}
+		$mvc = new MvcController();
+		$mvc -> enlacesPaginasController();
 
-}
-
-
-?>
-
-
-<section>
-
-<?php 
-
-$mvc = new MvcController();
-$mvc -> enlacesPaginasController();
-
-?>
-
-</section>
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- FastClick -->
-<script src="../../plugins/fastclick/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
+	?>
+	</div>
 </body>
 
+<?php include_once('links/link2.php'); ?>
 </html>

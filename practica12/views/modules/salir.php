@@ -1,8 +1,8 @@
 <?php
 
-session_start();
 session_destroy();
 
-?>
+echo '<script> alert("Haz cerrado Sesion") </script>';
+echo '<script> window.location = "index.php"; </script>';
 
-<h1>¡Haz salido de la aplicación!</h1>
+?>

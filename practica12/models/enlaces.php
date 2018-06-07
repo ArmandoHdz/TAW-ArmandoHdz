@@ -5,7 +5,9 @@ class Paginas{
 	public function enlacesPaginasModel($enlaces){
 
 
-		if($enlaces == "ingresar" || $enlaces == "usuarios" || $enlaces == "editar" || $enlaces == "productos" || $enlaces == "salir"){
+
+		if($enlaces == "ingresar" || $enlaces == "dashboard" || $enlaces == "productos" || $enlaces == "editar_producto" || $enlaces == "detalles_producto" ||  $enlaces == "salir" || $enlaces == 'borrar_producto' || $enlaces == "agregar_producto"){
+
 
 			$module =  "views/modules/".$enlaces.".php";
 		

@@ -1,45 +1,46 @@
-<!-- form start -->
-<form role="form">
-<div class="card-body">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
-  <div class="form-group">
-    <label for="exampleInputFile">File input</label>
-    <div class="input-group">
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" id="exampleInputFile">
-        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-      </div>
-      <div class="input-group-append">
-        <span class="input-group-text" id="">Upload</span>
-      </div>
+<div class="login">
+  <br><br><br>
+  <div class="card card-info">
+    <div class="card-header">
+      <h1 class="card-title" align="center">Control de Inventarios</h1>
     </div>
-  </div>
-  <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    <!-- /.card-header -->
+    <!-- form start -->
+
+    <form class="form-horizontal" method="post">
+      <br><br>
+      <div class="card-body">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input type="text" class="form-control" name="username" placeholder="Username">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input type="password" class="form-control" name="password" placeholder="Password">
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer" align="center">
+        <button type="submit" class="btn btn-success">Ingresar</button>
+      </div>
+      <br>
+      <!-- /.card-footer -->
+    </form>
   </div>
 </div>
-<!-- /.card-body -->
+
 <?php
 
 $ingreso = new MvcController();
-//$ingreso -> ingresoUsuarioController();
+$ingreso -> ingresaUsuarioController();
 
 if(isset($_GET["action"])){
-
 	if($_GET["action"] == "fallo"){
-
 		echo "Fallo al ingresar";
-	
 	}
-
 }
+//include_once('links/link2.php');
 
 ?>
