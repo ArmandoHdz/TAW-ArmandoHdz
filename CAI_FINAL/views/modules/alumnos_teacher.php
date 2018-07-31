@@ -22,7 +22,7 @@
     			echo '	<div class="alert alert-success alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-check"></i>Correcto !</h5>
-		                  Se agregó un nuevo Teacher
+		                  Se agregó un nuevo Alumno
 		                </div>';
     		}
     		else if($_GET['status'] == 'actualizado'){
@@ -36,41 +36,38 @@
     			echo '	<div class="alert alert-success alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-check"></i>Correcto !</h5>
-		                  El Teacher se eliminó correctamente
+		                  El Alumno se eliminó correctamente
 		                </div>';
     		}
     		else if($_GET['status'] == 'error'){
     			echo '	<div class="alert alert-danger alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-ban"></i> Error!</h5>
-		                  No se pudo guardar el Teacher
+		                  No se pudo guardar el Alumno
 		                </div>';
     		}
-    		else if($_GET['status'] == 'password'){
-    			echo '	<div class="alert alert-warning alert-dismissible">
-		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		                  <h5><i class="icon fa fa-ban"></i> Incorrecto!</h5>
-		                  Las contraseñas no coinciden
-		                </div>';
-    		}
-    		else if($_GET['status'] == 'incorrecto'){
+    		else if($_GET['status'] == 'existe'){
     			echo '	<div class="alert alert-warning alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-warning"></i> Incorrecto!</h5>
-		                  No se pueden eliminar Teachers con grupos asignados.
+		                  La matricula ingresada ya existe aqui o en otro grupo.
 		                </div>';
     		}
     	}
+
+    	$mvc = new Mvc();
+    	$grupo = $mvc->getGrupoController();
+    	$teacher = $mvc -> getUserTeacherController($_GET['user']);
 
 
     	 ?>
 	    <div class="card">
 	      <div class="card-header row">
 	      	<div class="col-sm-6" align="left">
-	      		<h3 class="card-title">Teachers</h3>
+	      		<h3 class="card-title"><?php echo 'Grupo: '.$grupo[0]['grupo']; ?></h3>
 	      	</div>
 	      	<div class="col-sm-6" align="right">      		
-	            <a href="index.php?user=admin&action=agregar_teacher" class="btn btn-success">Agregar Teacher</a>	           
+	            <h3 class="card-title">Teacher: <?php echo $teacher[0]['nombre_completo']; ?></h3>        
 	      	</div>
 	        
 	      </div>
@@ -79,17 +76,20 @@
 	        <table id="example1" class="table table-bordered table-striped">
 	          <thead>
 	          <tr>
-	          	<th>Id</th>
-	          	<th>Nombre</th>
-	            <th></th>
-	            <th></th>
+	          	<th>Matricula</th>
+	          	<th>Nombre Alumno</th>
+	          	<th>Carrera</th>
+	          	<?php for($i = 1; $i <= $grupo[0]['unidades']; $i++){ 
+	            echo '<th>Unidad '.$i.'</th>';
+	        	}
+	            ?>
 	          </tr>
 	          </thead>
 	          <tbody>
 	          <?php 
 
 		          $mvc = new Mvc();
-		          $mvc -> vistaTeachersController();
+		          $mvc -> vistaAlumnosTeacherController();
 
 	          ?> 
 	          

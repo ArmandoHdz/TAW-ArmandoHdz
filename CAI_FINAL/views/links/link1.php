@@ -28,6 +28,8 @@
 <link rel="stylesheet" href="bootstrap/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 <!-- Google Font: Source Sans Pro -->
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+<!-- Select2 -->
+<link rel="stylesheet" href="bootstrap/plugins/select2/select2.min.css">
 
 
   <!-- DataTables -->

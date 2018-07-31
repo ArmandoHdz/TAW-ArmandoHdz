@@ -41,17 +41,20 @@ class Mvc{
 			#se verifica que el nombre de usuario y la contraseña sea 'admin'
 			if($login == 1){
 				$_SESSION['validar'] = true;
-				echo "<script> window.location = 'index.php?user=admin&pass=".$_POST['password']."&action=visitas'; </script>";
+				echo "<script> window.location = 'index.php?user=admin&pass=".$_POST['password']."&action=visitas&start=1'; </script>";
 			}
 			else if($login == 2){
 				$_SESSION['validar'] = true;
-				echo "<script> window.location = 'index.php?user=teacher&action=asistencias'; </script>";
+				echo "<script> window.location = 'index.php?user=".$_POST['username']."&action=grupos_teacher'; </script>";
 			}
 			else{
 				echo "<script> window.location = 'index.php?action=error'; </script>";
 			}
 		}
 	}
+
+	// GESTION DE TEACHERS --------------------------
+
 	public function vistaTeachersController(){
 		$teachers = CRUD::vistaTeachersModel();
 
@@ -162,11 +165,625 @@ class Mvc{
 	public function eliminaTeacherController(){
 		if(isset($_POST['password'])){
 			if($_POST['password'] == $_SESSION['password']){
-				CRUD::eliminaTeacherModel($_GET['id']);
-				echo '<script> window.location = "index.php?user=admin&action=teachers&status=borrado"; </script>';
+				$respuesta = CRUD::eliminaTeacherModel($_GET['id']);
+				echo '<script> window.location = "index.php?user=admin&action=teachers&status='.$respuesta.'"; </script>';
 			}
 			else
 				echo '<script> window.location = "index.php?user=admin&action=eliminar_teacher&id='.$_GET["id"].'&status=password"; </script>';
+		}
+	}
+
+	public function getUserTeacherController(){
+		return CRUD::getUserTeacherModel($_GET['user']);
+	}
+
+	// GESTION DE GRUPOS --------------------------
+
+	public function vistaGruposController(){
+		$grupos = CRUD::vistaGruposModel();
+
+		foreach($grupos as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["id_grupo"].'</td>					
+					<td>'.$item["nivel"].'</td>
+					<td>'.$item["teacher"].'</td>
+					<td>'.$item["grupo"].'</td>
+					<td>'.$item["unidades"].'</td>
+					<td>'.$item["horas_unidad"].'</td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=vista_grupo&id_grupo='.$item["id_grupo"].'"><button class="btn btn-info">Ver Grupo</button></a></td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=editar_grupo&id='.$item["id_grupo"].'"><button class="btn btn-warning">Editar</button></a></td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=eliminar_grupo&id='.$item["id_grupo"].'"><button class="btn btn-danger">Eliminar</button></a></td></tr>';
+
+		}
+	}
+	
+	public function getGrupoController(){
+		return CRUD::getGrupoModel($_GET['id_grupo']);
+
+	}
+	public function agregarGrupoController(){
+
+		$nivel = CRUD::getNivelModel();
+		$teachers = CRUD::vistaTeachersModel();
+
+		echo '  <div class="card-body">
+	              <div class="form-group row">
+	              	<div class="col-sm-2" align="right">
+	                  <label class="control-label">Nivel:</label>
+	                </div>
+	                <div class="col-sm-10">
+	                  <select class="form-control" name="nivel">';
+	                 foreach ($nivel as $key => $value) {
+	                 	echo '<option>'.$value['id_nivel'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	              	<div class="col-sm-2" align="right">
+	                  <label class="control-label">Teacher:</label>
+	                </div>
+	                <div class="col-sm-10">
+	                  <select class="form-control" name="teacher">';
+	                 foreach ($teachers as $key => $value) {
+	                 	echo '<option>'.$value['nombre_completo'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+	              <div class="form-group row" align="right">
+	              	<div class="col-sm-2" align="right">
+	                  <label class="control-label">Unidades:</label>
+	                </div>
+	              	<div class="col-sm-10">
+	                  <input type="number" class="form-control" name="unidades" required placeholder="Numero de Unidades">
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	                <div class="col-sm-2" align="right">
+	                  <label class="control-label">Horas:</label>
+	                </div>
+	              	<div class="col-sm-10">
+	                  <input type="number" class="form-control" name="horas" required placeholder="Horas x Unidad">
+	                </div>
+	              </div>	              
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Agregar Grupo</button>
+	              <a href="index.php?user=admin&action=grupos" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function registroGrupoController(){
+		if(isset($_POST["nivel"])){
+
+			$datosGrupo = array( "nivel"=>$_POST["nivel"], 
+								 "teacher"=>$_POST["teacher"],
+								 "unidades"=>$_POST["unidades"],
+								 "horas"=>$_POST["horas"]);
+
+			$respuesta = CRUD::registroGrupoModel($datosGrupo);
+			echo '<script> window.location = "index.php?user=admin&action=grupos&status='.$respuesta.'"; </script>';
+		}
+
+	}
+	public function editarGrupoController(){
+
+		$grupo = CRUD::getGrupoModel($_GET['id']);
+		$teachers = CRUD::vistaTeachersModel();
+
+		echo '  <div class="card-body">
+	              <div class="form-group row">
+	              	<div class="col-sm-2" align="right">
+	                  <label class="control-label">Teacher:</label>
+	                </div>
+	                <div class="col-sm-10">
+	                  <select class="form-control" name="teacher">
+	                  		<option>'.$grupo[0]['teacher'].'</option>';
+	                 foreach ($teachers as $key => $value) {
+	                 	echo '<option>'.$value['nombre_completo'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+	              <div class="form-group row" align="right">
+	              	<div class="col-sm-2" align="right">
+	                  <label class="control-label">Unidades:</label>
+	                </div>
+	              	<div class="col-sm-10">
+	                  <input type="number" class="form-control" name="unidades" required placeholder="Numero de Unidades" value="'.$grupo[0]['unidades'].'">
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	                <div class="col-sm-2" align="right">
+	                  <label class="control-label">Horas:</label>
+	                </div>
+	              	<div class="col-sm-10">
+	                  <input type="number" class="form-control" name="horas" required placeholder="Horas x Unidad" value="'.$grupo[0]['horas_unidad'].'">
+	                </div>
+	              </div>	              
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Actualizar Grupo</button>
+	              <a href="index.php?user=admin&action=grupos" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function actualizarGrupoController(){
+		if(isset($_POST["teacher"])){
+
+			$datosGrupo = array( "id"=>$_GET["id"],
+								 "teacher"=>$_POST["teacher"],
+								 "unidades"=>$_POST["unidades"],
+								 "horas"=>$_POST["horas"]);
+
+			$respuesta = CRUD::actualizarGrupoModel($datosGrupo);
+			echo '<script> window.location = "index.php?user=admin&action=grupos&status='.$respuesta.'"; </script>';
+		}
+
+	}
+	public function eliminaGrupoController(){
+		if(isset($_POST['password'])){
+			if($_POST['password'] == $_SESSION['password']){
+				$respuesta = CRUD::eliminaGrupoModel($_GET['id']);
+				echo '<script> window.location = "index.php?user=admin&action=grupos&status='.$respuesta.'"; </script>';
+			}
+			else
+				echo '<script> window.location = "index.php?user=admin&action=eliminar_grupo&id='.$_GET["id"].'&status=password"; </script>';
+		}
+	}
+
+	// --------------------------------------------
+
+	// GESTION DE ALUMNOS --------------------------
+
+	public function vistaAlumnosController(){
+		$alumnos = CRUD::vistaAlumnosModel($_GET['id_grupo']);
+
+		foreach($alumnos as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["matricula"].'</td>					
+					<td>'.$item["nombre"].'</td>
+					<td>'.$item["carrera"].'</td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=editar_alumno&id_grupo='.$_GET["id_grupo"].'&mat='.$item["matricula"].'"><button class="btn btn-warning">Editar</button></a></td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=eliminar_alumno&id_grupo='.$_GET["id_grupo"].'&mat='.$item["matricula"].'"><button class="btn btn-danger">Eliminar</button></a></td>';
+
+		}
+	}
+	public function agregarAlumnoController(){
+
+		//$nivel = CRUD::getNivelModel();
+		//$grupos = CRUD::vistaGruposModel();
+		$carreras = CRUD::getCarrerasModel();
+
+		echo '  <div class="card-body">
+	              <div class="form-group row">
+	                <div class="col-sm-3" align="right">
+	                  <label class="control-label">Matricula:</label>
+	                </div>
+	              	<div class="col-sm-9">
+	                  <input type="number" class="form-control" name="matricula" required placeholder="Matricula">
+	                </div>
+	              </div>
+	              <div class="form-group row" align="right">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Nombre Completo:</label>
+	                </div>
+	              	<div class="col-sm-9">
+	                  <input type="text" class="form-control" name="nombre" required placeholder="Nombre Completo">
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Carrera:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="carrera" required>';
+	                 foreach ($carreras as $key => $value) {
+	                 	echo '<option>'.$value['nombre'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>          	              
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Agregar Alumno</button>
+	              <a href="index.php?user=admin&action=vista_grupo&id_grupo='.$_GET['id_grupo'].'" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function registroAlumnoController(){
+		if(isset($_POST["matricula"])){
+
+			$grupo = CRUD::getGrupoModel($_GET['id_grupo']);
+			$grupo = $grupo[0]['id_grupo'];
+			//echo '<script>alert("'.$grupo.'");</script>';
+			$datosAlumno = array( "matricula"=>$_POST["matricula"], 
+								 "nombre"=>strtoupper($_POST["nombre"]),
+								 "carrera"=>$_POST["carrera"],
+								 "grupo"=>$grupo);
+
+
+			$respuesta = CRUD::registroAlumnoModel($datosAlumno);
+			if($respuesta == 'existe_alumno')
+				echo '<script> window.location = "index.php?user=admin&action=agregar_alumno&id_grupo='.$_GET['id_grupo'].'&status='.$respuesta.'"; </script>';
+			else
+				echo '<script> window.location = "index.php?user=admin&action=vista_grupo&id_grupo='.$_GET['id_grupo'].'&status='.$respuesta.'"; </script>';
+		}
+
+	}
+	public function editarAlumnoController(){
+
+		$alumno = CRUD::getAlumnoModel($_GET['mat'], $_GET['id_grupo']);
+		
+		$grupos = CRUD::vistaGruposModel();
+		$carreras = CRUD::getCarrerasModel();
+
+		echo '  <div class="card-body">
+	              <div class="form-group row">
+	                <div class="col-sm-3" align="right">
+	                  <label class="control-label">Matricula:</label>
+	                </div>
+	              	<div class="col-sm-9">
+	                  <input type="number" class="form-control" name="matricula" disabled value="'.$alumno[0]['matricula'].'">
+	                </div>
+	              </div>
+	              <div class="form-group row" align="right">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Nombre Completo:</label>
+	                </div>
+	              	<div class="col-sm-9">
+	                  <input type="text" class="form-control" name="nombre" required placeholder="Nombre Completo" value="'.$alumno[0]['nombre'].'">
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Carrera:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="carrera" required>
+	                  		<option>'.$alumno[0]['carrera'].'</option>';
+	                 foreach ($carreras as $key => $value) {
+	                 	echo '<option>'.$value['nombre'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>   
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Grupo:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="grupo" required>
+	                  		<option>'.$alumno[0]['grupo'].'</option>';
+	                 foreach ($grupos as $key => $value) {
+	                 	echo '<option>'.$value['grupo'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Actualizar Informacion</button>
+	              <a href="index.php?user=admin&action=vista_grupo&id_grupo='.$_GET['id_grupo'].'" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function actualizarAlumnoController(){
+		if(isset($_POST["nombre"])){
+
+			$datosAlumno = array( "matricula"=>$_GET["mat"],
+								 "nombre"=>strtoupper($_POST["nombre"]),
+								 "carrera"=>$_POST["carrera"],
+								 "grupo"=>$_POST["grupo"]);
+
+			$respuesta = CRUD::actualizarAlumnoModel($datosAlumno);
+			echo '<script> window.location = "index.php?user=admin&action=vista_grupo&id_grupo='.$_GET['id_grupo'].'&status='.$respuesta.'"; </script>';
+		}
+
+	}
+	public function eliminaAlumnoController(){
+		if(isset($_POST['password'])){
+			if($_POST['password'] == $_SESSION['password']){
+				CRUD::eliminaAlumnoModel($_GET['mat']);
+				echo '<script> window.location = "index.php?user=admin&action=vista_grupo&id_grupo='.$_GET["id_grupo"].'&status=borrado"; </script>';
+			}
+			else
+				echo '<script> window.location = "index.php?user=admin&action=eliminar_alumno&id_grupo='.$_GET["id_grupo"].'&mat='.$_GET["mat"].'&status=password"; </script>';
+		}
+	}
+
+	// --------------------------------------------
+	// GESTION DE VISITAS --------------------------
+
+	public function vistaVisitasController(){
+		$visitas = CRUD::vistaVisitasModel($_SESSION['horario'].' '.$_SESSION['fecha']);
+
+		foreach($visitas as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["id_visita"].'</td>
+					<td>'.$item["alumno"].'</td>					
+					<td>'.$item["nivel"].'</td>
+					<td>'.$item["teacher"].'</td>
+					<td>'.$item["grupo"].'</td>
+					<td>'.$item["actividad"].'</td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=eliminar_visita&id='.$item["id_visita"].'"><button class="btn btn-danger">Marcar Salida</button></a></td>';
+
+		}
+	}
+	public function agregarVisitaController(){
+
+		$teacher = null;
+		$nivel = CRUD::getNivelModel();
+		$actividades = CRUD::vistaActividadesModel();
+		if(isset($_GET['nivel']))
+			$grupos = CRUD::getGruposModel($_GET['nivel']);
+
+		if(isset($_GET['grupo'])){
+			$alumnos = CRUD::getAlumnosModel($_GET['grupo']);
+			$unidades = CRUD::getUnidadesModel($_GET['grupo']);
+			$teacher = CRUD::getTeacherNameModel($_GET['grupo']);
+			//echo '<script>alert("'.$alumnos[0]['teacher'].'");</script>';
+		}
+		
+		$carreras = CRUD::getCarrerasModel();
+
+		echo "<script>
+				function activa_grupo(nivel){
+					window.location = 'index.php?user=admin&action=agregar_visita&nivel=' + nivel.value;
+				}
+				function activa_alumno(nivel, grupo){
+					window.location = 'index.php?user=admin&action=agregar_visita&nivel=' + nivel.value + '&grupo=' + grupo.value;
+				}
+
+				var nivel = document.getElemetsByName('nivel');
+				var grupo = document.getElemetsByName('grupo');
+			  </script> ";
+
+		echo '  <div class="card-body">
+				  <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Nivel:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="nivel" required onChange="activa_grupo(this)">';
+	                if(isset($_GET['nivel']))
+		            	echo '<option>'.$_GET['nivel'].'</option>';
+		            else
+	            		echo '<option></option>';
+	                 foreach ($nivel as $key => $value) {
+	                 	echo '<option>'.$value['id_nivel'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div> 
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Grupo:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="grupo" required onChange="activa_alumno(nivel, this)">';
+	                  if(isset($_GET['nivel']))
+		            	echo '<option>'.$_GET['grupo'].'</option>';
+		              else
+	            		echo '<option></option>';
+	                 foreach ($grupos as $key => $value) {
+	                 	echo '<option>'.$value['grupo'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	                <div class="col-sm-3" align="right">
+	                  <label class="control-label">Teacher:</label>
+	                </div>
+	              	<div class="col-sm-9">
+	                  <input type="text" class="form-control" name="matricula" disabled value="';
+	                  if($teacher != null) echo $teacher[0]['teacher'];
+	                  echo '">
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Alumno:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="alumno" required">';
+	                 foreach ($alumnos as $key => $value) {
+	                 	echo '<option>'.$value['nombre'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>	              
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Unidad:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="unidad" required">';
+	                 for($i = 1; $i <= $unidades; $i++) {
+	                 	echo '<option>'.$i.'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+	              <div class="form-group row">
+	              	<div class="col-sm-3" align="right">
+	                  <label class="control-label">Actividad:</label>
+	                </div>
+	                <div class="col-sm-9">
+	                  <select class="form-control" name="actividad" required">';
+	                 foreach ($actividades as $key => $value) {
+	                 	echo '<option>'.$value['nombre'].'</option>';
+	                 }
+	            echo '</select>
+	                </div>
+	              </div>
+
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Agregar Registro</button>
+	              <a href="index.php?user=admin&action=visitas" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function registroVisitaController(){
+		if(isset($_POST["nivel"])){
+
+			//$grupo = CRUD::getGrupoModel($_GET['id_grupo']);
+			//$grupo = $grupo[0]['id_grupo'];
+			//echo '<script>alert("'.$grupo.'");</script>';
+			$datosVisita = array( "nivel"=>$_POST["nivel"], 
+								 "grupo"=>$_POST["grupo"],
+								 "alumno"=>$_POST["alumno"],
+								 "actividad"=>$_POST["actividad"],
+								 "unidad"=>$_POST["unidad"],
+								 "horario"=>$_SESSION['horario'].' '.$_SESSION['fecha'],
+								 "hora_inicio"=>$_SESSION['hora']);
+
+
+			$respuesta = CRUD::registroVisitasModel($datosVisita);
+			echo '<script> window.location = "index.php?user=admin&action=visitas&status='.$respuesta.'"; </script>';
+				
+		}
+
+	}
+	public function eliminaVisitaController(){
+		CRUD::eliminaVisitaModel($_GET['id']);
+		echo '<script> window.location = "index.php?user=admin&action=visitas&status=salida"; </script>';
+	}
+
+	public function vistaHistorialController(){
+		$historial = CRUD::vistaHistorialModel($_SESSION['horario'].' '.$_SESSION['fecha']);
+
+		foreach($historial as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["id_visita"].'</td>
+					<td>'.$item["entrada"].'</td>
+					<td>'.$item["alumno"].'</td>					
+					<td>'.$item["nivel"].'</td>
+					<td>'.$item["teacher"].'</td>
+					<td>'.$item["grupo"].'</td>
+					<td>'.$item["actividad"].'</td>
+					<td>'.$item["unidad"].'</td>
+					<td>'.$item["horario"].'</td></tr>';
+
+		}
+	}
+	//---------------------------------------------
+	// GESTION DE TEACHERS --------------------------
+
+	public function vistaActividadesController(){
+		$actividad = CRUD::vistaActividadesModel();
+
+		foreach($actividad as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["id_actividad"].'</td>					
+					<td>'.$item["nombre"].'</td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=editar_actividad&id='.$item["id_actividad"].'&nombre='.$item["nombre"].'"><button class="btn btn-warning">Editar</button></a></td>
+					<td style="text-align: center;"><a href="index.php?user=admin&action=eliminar_actividad&id='.$item["id_actividad"].'"><button class="btn btn-danger">Eliminar</button></a></td>';
+
+		}
+	}
+	public function agregarActividadController(){
+
+		echo '  <div class="card-body">
+	              <div class="form-group">
+	                <div class="col-sm-12">
+	                  <input type="text" class="form-control" required name="nombre" placeholder="Nombre Actividad">
+	                </div>
+	              </div>	                           
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Agregar Actividad</button>
+	              <a href="index.php?user=admin&action=actividades" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function registroActividadController(){
+		if(isset($_POST["nombre"])){
+
+			$datosActividad = array( "nombre"=>strtoupper($_POST["nombre"]));
+
+			$respuesta = CRUD::registroActividadModel($datosActividad);
+			echo '<script> window.location = "index.php?user=admin&action=actividades&status='.$respuesta.'"; </script>';
+				
+		}
+
+	}
+	public function editarActividadController(){
+
+		$actividad = CRUD::getActividadModel($_GET['id']);
+
+		echo '  <div class="card-body">
+	              <div class="form-group">
+	                <div class="col-sm-12">
+	                  <input type="text" class="form-control" required name="nombre" placeholder="Nombre Actividad" value="'.$actividad[0]['nombre'].'">
+	                </div>
+	              </div>	                           
+	            </div>
+	            <!-- /.card-body -->
+	            <div class="card-footer">
+	              <button type="submit" class="btn btn-success">Actualizar Actividad</button>
+	              <a href="index.php?user=admin&action=actividades" class="btn btn-default">Cancelar</a>
+	            </div>';
+	}
+	public function actualizarActividadController(){
+		if(isset($_POST["nombre"])){
+
+			$datosActividad = array("id" => $_GET['id'], 
+								  "nombre"=>strtoupper($_POST["nombre"]));
+
+			$respuesta = CRUD::actualizarActividadModel($datosActividad, $_GET['nombre']);
+			echo '<script> window.location = "index.php?user=admin&action=actividades&status='.$respuesta.'"; </script>';	
+		}
+
+	}
+	public function eliminaActividadController(){
+		if(isset($_POST['password'])){
+			if($_POST['password'] == $_SESSION['password']){
+				$respuesta = CRUD::eliminaActividadModel($_GET['id']);
+				echo '<script> window.location = "index.php?user=admin&action=actividades&status='.$respuesta.'"; </script>';
+			}
+			else
+				echo '<script> window.location = "index.php?user=admin&action=eliminar_actividad&id='.$_GET["id"].'&status=password"; </script>';
+		}
+	}
+
+	// GESTION DE TEACHERS --------------------------
+
+	public function vistaGruposTeacherController(){
+		$grupos = CRUD::vistaGruposTeacherModel($_GET['user']);
+
+		foreach($grupos as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["id_grupo"].'</td>					
+					<td>'.$item["nivel"].'</td>
+					<td>'.$item["teacher"].'</td>
+					<td>'.$item["grupo"].'</td>
+					<td>'.$item["unidades"].'</td>
+					<td>'.$item["horas_unidad"].'</td>
+					<td style="text-align: center;"><a href="index.php?user='.$_GET['user'].'&action=alumnos_teacher&id_grupo='.$item["id_grupo"].'"><button class="btn btn-info">Ver asistencia</button></a></td></tr>';
+
+		}
+	}
+
+	public function vistaAlumnosTeacherController(){
+		$alumnos = CRUD::vistaAlumnosTeacherModel($_GET['id_grupo']);
+
+
+		foreach($alumnos as $row => $item){ 
+			echo'<tr>
+					<td>'.$item["matricula"].'</td>					
+					<td>'.$item["alumno"].'</td>
+					<td>'.$item["carrera"].'</td>';
+			for ($i=1; $i <= $item['unidades']; $i++) { 
+				$cantidad = CRUD::getUnidadesAlumnoModel($item["matricula"], $i);
+				echo '<td>'.$cantidad.'</td>';
+				# code...
+			}
+			echo "</tr>";
+
 		}
 	}
 	

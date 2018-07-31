@@ -22,7 +22,7 @@
     			echo '	<div class="alert alert-success alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-check"></i>Correcto !</h5>
-		                  Se agregó un nuevo Teacher
+		                  Se agregó una Actividad
 		                </div>';
     		}
     		else if($_GET['status'] == 'actualizado'){
@@ -36,28 +36,28 @@
     			echo '	<div class="alert alert-success alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-check"></i>Correcto !</h5>
-		                  El Teacher se eliminó correctamente
+		                  Actividad eliminada
 		                </div>';
     		}
     		else if($_GET['status'] == 'error'){
     			echo '	<div class="alert alert-danger alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-ban"></i> Error!</h5>
-		                  No se pudo guardar el Teacher
+		                  No se pudo guardar la Actividad
 		                </div>';
     		}
-    		else if($_GET['status'] == 'password'){
+    		else if($_GET['status'] == 'existe'){
     			echo '	<div class="alert alert-warning alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-ban"></i> Incorrecto!</h5>
-		                  Las contraseñas no coinciden
+		                  La actividad que desea registrar ya existe.
 		                </div>';
     		}
     		else if($_GET['status'] == 'incorrecto'){
     			echo '	<div class="alert alert-warning alert-dismissible">
 		                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		                  <h5><i class="icon fa fa-warning"></i> Incorrecto!</h5>
-		                  No se pueden eliminar Teachers con grupos asignados.
+		                  No se eliminan actividades asignadas en el historial.
 		                </div>';
     		}
     	}
@@ -67,10 +67,10 @@
 	    <div class="card">
 	      <div class="card-header row">
 	      	<div class="col-sm-6" align="left">
-	      		<h3 class="card-title">Teachers</h3>
+	      		<h3 class="card-title">Lista de Actividades</h3>
 	      	</div>
 	      	<div class="col-sm-6" align="right">      		
-	            <a href="index.php?user=admin&action=agregar_teacher" class="btn btn-success">Agregar Teacher</a>	           
+	            <a href="index.php?user=admin&action=agregar_actividad" class="btn btn-success">Agregar Actividad</a>	           
 	      	</div>
 	        
 	      </div>
@@ -89,7 +89,7 @@
 	          <?php 
 
 		          $mvc = new Mvc();
-		          $mvc -> vistaTeachersController();
+		          $mvc -> vistaActividadesController();
 
 	          ?> 
 	          

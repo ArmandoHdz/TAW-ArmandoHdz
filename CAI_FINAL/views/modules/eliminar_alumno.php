@@ -18,7 +18,7 @@
           echo '  <div class="alert alert-warning alert-dismissible">
                       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                       <h5><i class="icon fa fa-ban"></i> Incorrecto!</h5>
-                      Las contraseñas no coinciden
+                      Contraseña Incorrecta
                     </div>';
         }
       }
@@ -28,7 +28,7 @@
       <div class="card" align="center">
         <div class="card-header row">
           <div class="col-sm-12" align="left">
-            <h3 class="card-title">Eliminar Teacher - Confirmar contraseña de administrador</h3>
+            <h3 class="card-title">Eliminar Alumno - Confirmar contraseña de administrador</h3>
           </div>          
         </div>
         <div style="">
@@ -44,7 +44,7 @@
               <!-- /.card-body -->
               <div class="card-footer" align="center">
                 <button type="submit" class="btn btn-success">Confirmar</button>
-                <a href="index.php?user=admin&action=teachers" class="btn btn-default">Cancelar</a>
+                <a href="index.php?action=vista_grupo&id_grupo=<?php echo $_GET['id_grupo']; ?>" class="btn btn-default">Cancelar</a>
               </div>
               <br>
               <!-- /.card-footer -->
@@ -62,6 +62,6 @@
 <?php
 
 $ingreso = new Mvc();
-$ingreso -> eliminaTeacherController();
+$ingreso -> eliminaAlumnoController();
 
 ?>

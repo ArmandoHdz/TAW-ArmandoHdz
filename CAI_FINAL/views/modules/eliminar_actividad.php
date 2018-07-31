@@ -28,7 +28,7 @@
       <div class="card" align="center">
         <div class="card-header row">
           <div class="col-sm-12" align="left">
-            <h3 class="card-title">Eliminar Teacher - Confirmar contraseña de administrador</h3>
+            <h3 class="card-title">Eliminar Actividad - Confirmar contraseña de administrador</h3>
           </div>          
         </div>
         <div style="">
@@ -44,7 +44,7 @@
               <!-- /.card-body -->
               <div class="card-footer" align="center">
                 <button type="submit" class="btn btn-success">Confirmar</button>
-                <a href="index.php?user=admin&action=teachers" class="btn btn-default">Cancelar</a>
+                <a href="index.php?user=admin&action=actividades" class="btn btn-default">Cancelar</a>
               </div>
               <br>
               <!-- /.card-footer -->
@@ -62,6 +62,6 @@
 <?php
 
 $ingreso = new Mvc();
-$ingreso -> eliminaTeacherController();
+$ingreso -> eliminaActividadController();
 
 ?>
